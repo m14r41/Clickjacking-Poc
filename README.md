@@ -8,4 +8,4 @@ This repository hosts a professional Proof of Concept (PoC) showcasing the Click
 - A concise explanation of Clickjacking vulnerability.
 - Inclusion of an `<iframe>` element demonstrating a common Clickjacking vector.
 
-**Author:** m14r41
+**By:** m14r41
