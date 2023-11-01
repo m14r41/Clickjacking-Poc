@@ -1,5 +1,14 @@
 # Clickjacking Vulnerability PoC
 
+**Description:**
+This repository hosts a professional Proof of Concept (PoC) showcasing the Clickjacking vulnerability in web applications. Clickjacking represents a significant security concern, allowing unauthorized manipulation of user interactions and data access.
+
+**Features:**
+- A clear title explaining the repository's purpose.
+- A concise explanation of Clickjacking vulnerability.
+- Inclusion of an `<iframe>` element demonstrating a common Clickjacking vector.
+
+  
 ```html
 <html>
 <title>Click Jacking</title>
@@ -14,12 +23,9 @@
 </html>
 ```
 
-**Description:**
-This repository hosts a professional Proof of Concept (PoC) showcasing the Clickjacking vulnerability in web applications. Clickjacking represents a significant security concern, allowing unauthorized manipulation of user interactions and data access.
+---
 
-**Features:**
-- A clear title explaining the repository's purpose.
-- A concise explanation of Clickjacking vulnerability.
-- Inclusion of an `<iframe>` element demonstrating a common Clickjacking vector.
+![image](https://github.com/m14r41/Clickjacking-Poc/assets/95265573/42fd8f35-bd40-480e-87a1-fafc8392ab21)
+
 
 **By:** m14r41
