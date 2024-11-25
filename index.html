@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resizable Sidebar with Dynamic URL Loader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+        }
+        /* Left sidebar styling */
+        .sidebar {
+            width: 25%;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: auto;
+            position: relative;
+        }
+        .sidebar input, .sidebar button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 80%;
+        }
+        .resize-bar {
+            background-color: #444;
+            width: 10px;
+            cursor: ew-resize;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+        }
+        /* Right content area styling */
+        .content {
+            width: 75%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+            transition: width 0.2s;
+        }
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+        }
+        /* Footer section for social icons */
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            background-color: black;
+        }
+        /* Divider line above the footer */
+        .footer-divider {
+            border-top: 1px solid #444; /* Dark gray line */
+            margin-bottom: 10px;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .social-icons a {
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: #1e90ff; /* Blue color on hover */
+        }
+        /* Styling for "By: Madhurendra" */
+        .footer-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            font-family: "Courier New", Courier, monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left sidebar with input field for the URL -->
+    <div class="sidebar" id="sidebar">
+        <h2 style="font-size: 24px;">Enter Website URL</h2>
+        
+        <input type="text" id="urlInput" placeholder="Enter website URL" value="http://testphp.vulnweb.com/" />
+        <button onclick="loadCustomURL()">Load Website</button>
+
+        <!-- Resizable divider bar -->
+        <div class="resize-bar" id="resizeBar"></div>
+
+        <!-- Footer with Social Icons -->
+        <div class="footer">
+            <!-- Divider Line Above Social Icons -->
+            <div class="footer-divider"></div>
+            
+            <div class="social-icons">
+                <a href="https://github.com/m14r41" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/M14R41/" target="_blank" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <!-- Added Twitter Icon -->
+                <a href="https://twitter.com/m14_r41" target="_blank" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            
+            <!-- "By: Madhurendra" simple text -->
+            <div class="footer-text">
+                By: Madhurendra
+            </div>
+        </div>
+    </div>
+
+    <!-- Content area where iframe will load based on the input URL -->
+    <div class="content" id="content">
+        <h2 style="font-weight: bold; color: black">Clickjacking Vulnerability PoC</h2>
+        <p style="font-weight: bold; color: rgb(146, 83, 83)">This vulnerability presents a security risk, allowing for potential manipulation of user interactions and unauthorized data access without user consent.</p>
+        
+        <!-- Iframe to display the loaded content -->
+        <iframe id="iframeContent" src="http://testphp.vulnweb.com/" title="Clickjacking PoC"></iframe>
+    </div>
+
+    <script>
+        // Function to load the iframe with a URL
+        function loadCustomURL() {
+            let url = document.getElementById("urlInput").value.trim();
+            
+            // Check if the URL starts with http:// or https://, if not, prepend http://
+            if (!url.match(/^https?:\/\//)) {
+                // If it's just a domain or IP without the protocol
+                url = "http://" + url;
+            }
+
+            // Validate URL after potentially adding 'http://'
+            if (!url.match(/^https?:\/\//)) {
+                alert("Please enter a valid URL starting with http:// or https://");
+                return;
+            }
+            
+            const iframe = document.getElementById("iframeContent");
+            iframe.src = url;  // Load the custom URL into the iframe
+        }
+
+        // Resizable sidebar functionality
+        let isResizing = false;
+        let lastDownX = 0;
+
+        const resizeBar = document.getElementById("resizeBar");
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("content");
+
+        // When mouse is pressed on the resize bar
+        resizeBar.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            lastDownX = e.clientX;
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', stopResizing);
+        });
+
+        // Handle mouse move during resizing
+        function handleMouseMove(e) {
+            if (!isResizing) return;
+
+            let offset = e.clientX - lastDownX;
+            let newWidth = sidebar.offsetWidth + offset;
+
+            // Ensure the width is within bounds (minimum 200px for sidebar)
+            if (newWidth >= 200 && newWidth <= window.innerWidth - 100) {
+                sidebar.style.width = newWidth + 'px';
+                content.style.width = (window.innerWidth - newWidth) + 'px';
+                lastDownX = e.clientX;
+            }
+        }
+
+        // Stop resizing on mouse up
+        function stopResizing() {
+            isResizing = false;
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', stopResizing);
+        }
+    </script>
+
+</body>
+</html>
