@@ -26,7 +26,7 @@
             overflow: auto;
             position: relative;
         }
-        .sidebar input, .sidebar button {
+        .sidebar input {
             padding: 10px;
             font-size: 16px;
             margin: 10px 0;
@@ -94,6 +94,7 @@
         <h2 style="font-size: 24px;">Enter Website URL</h2>
         
         <input type="text" id="urlInput" placeholder="Enter website URL" value="http://testphp.vulnweb.com/" />
+        <p style="color: lightgray; font-size: 12px;">Press Enter or edit the input to load the URL.</p>
         
         <!-- Resizable divider bar -->
         <div class="resize-bar" id="resizeBar"></div>
@@ -125,20 +126,25 @@
         function loadCustomURL() {
             let url = document.getElementById("urlInput").value.trim();
 
+            // Ensure the URL starts with http:// or https://
             if (!url.match(/^https?:\/\//)) {
                 url = "http://" + url;
             }
 
+            // Update the iframe source
             const iframe = document.getElementById("iframeContent");
             iframe.src = url;
         }
 
-        // Automatically load the initial URL and reload iframe immediately after input change
+        // Automatically load the initial URL and listen for input changes
         document.addEventListener("DOMContentLoaded", () => {
+            const urlInput = document.getElementById("urlInput");
+            const iframe = document.getElementById("iframeContent");
+
+            // Load the initial URL
             loadCustomURL();
 
-            // Event listener for immediate iframe reload when URL is entered
-            const urlInput = document.getElementById("urlInput");
+            // Reload iframe immediately after pressing Enter or modifying input
             urlInput.addEventListener("input", loadCustomURL);
         });
 
