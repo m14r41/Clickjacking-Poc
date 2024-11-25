@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clickjacking Poc</title>
+    <title>Clickjacking PoC</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -13,7 +13,6 @@
             font-family: Arial, sans-serif;
             background-color: black;
         }
-        /* Left sidebar styling */
         .sidebar {
             width: 25%;
             background-color: #333;
@@ -42,7 +41,6 @@
             bottom: 0;
             right: 0;
         }
-        /* Right content area styling */
         .content {
             width: 75%;
             padding: 20px;
@@ -55,7 +53,6 @@
             height: 80vh;
             border: none;
         }
-        /* Footer section for social icons */
         .footer {
             margin-top: auto;
             width: 100%;
@@ -64,9 +61,8 @@
             position: relative;
             background-color: black;
         }
-        /* Divider line above the footer */
         .footer-divider {
-            border-top: 1px solid #444; /* Dark gray line */
+            border-top: 1px solid #444;
             margin-bottom: 10px;
         }
         .social-icons {
@@ -81,9 +77,8 @@
             transition: color 0.3s;
         }
         .social-icons a:hover {
-            color: #1e90ff; /* Blue color on hover */
+            color: #1e90ff;
         }
-        /* Styling for "By: Madhurendra" */
         .footer-text {
             font-size: 20px;
             font-weight: bold;
@@ -95,21 +90,16 @@
 </head>
 <body>
 
-    <!-- Left sidebar with input field for the URL -->
     <div class="sidebar" id="sidebar">
         <h2 style="font-size: 24px;">Enter Website URL</h2>
         
         <input type="text" id="urlInput" placeholder="Enter website URL" value="http://testphp.vulnweb.com/" />
-        <button onclick="loadCustomURL()">Load Website</button>
-
+        
         <!-- Resizable divider bar -->
         <div class="resize-bar" id="resizeBar"></div>
 
-        <!-- Footer with Social Icons -->
         <div class="footer">
-            <!-- Divider Line Above Social Icons -->
             <div class="footer-divider"></div>
-            
             <div class="social-icons">
                 <a href="https://github.com/m14r41" target="_blank" title="GitHub">
                     <i class="fab fa-github"></i>
@@ -117,50 +107,41 @@
                 <a href="https://www.linkedin.com/in/M14R41/" target="_blank" title="LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <!-- Added Twitter Icon -->
                 <a href="https://twitter.com/m14_r41" target="_blank" title="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>
             </div>
-            
-            <!-- "By: Madhurendra" simple text -->
-            <div class="footer-text">
-                By: Madhurendra
-            </div>
+            <div class="footer-text">By: Madhurendra</div>
         </div>
     </div>
 
-    <!-- Content area where iframe will load based on the input URL -->
     <div class="content" id="content">
         <h2 style="font-weight: bold; color: black">Clickjacking Vulnerability PoC</h2>
         <p style="font-weight: bold; color: rgb(146, 83, 83)">This vulnerability presents a security risk, allowing for potential manipulation of user interactions and unauthorized data access without user consent.</p>
-        
-        <!-- Iframe to display the loaded content -->
         <iframe id="iframeContent" src="http://testphp.vulnweb.com/" title="Clickjacking PoC"></iframe>
     </div>
 
     <script>
-        // Function to load the iframe with a URL
         function loadCustomURL() {
             let url = document.getElementById("urlInput").value.trim();
-            
-            // Check if the URL starts with http:// or https://, if not, prepend http://
+
             if (!url.match(/^https?:\/\//)) {
-                // If it's just a domain or IP without the protocol
                 url = "http://" + url;
             }
 
-            // Validate URL after potentially adding 'http://'
-            if (!url.match(/^https?:\/\//)) {
-                alert("Please enter a valid URL starting with http:// or https://");
-                return;
-            }
-            
             const iframe = document.getElementById("iframeContent");
-            iframe.src = url;  // Load the custom URL into the iframe
+            iframe.src = url;
         }
 
-        // Resizable sidebar functionality
+        // Automatically load the initial URL and reload iframe immediately after input change
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCustomURL();
+
+            // Event listener for immediate iframe reload when URL is entered
+            const urlInput = document.getElementById("urlInput");
+            urlInput.addEventListener("input", loadCustomURL);
+        });
+
         let isResizing = false;
         let lastDownX = 0;
 
@@ -168,7 +149,6 @@
         const sidebar = document.getElementById("sidebar");
         const content = document.getElementById("content");
 
-        // When mouse is pressed on the resize bar
         resizeBar.addEventListener('mousedown', (e) => {
             isResizing = true;
             lastDownX = e.clientX;
@@ -176,14 +156,12 @@
             document.addEventListener('mouseup', stopResizing);
         });
 
-        // Handle mouse move during resizing
         function handleMouseMove(e) {
             if (!isResizing) return;
 
             let offset = e.clientX - lastDownX;
             let newWidth = sidebar.offsetWidth + offset;
 
-            // Ensure the width is within bounds (minimum 200px for sidebar)
             if (newWidth >= 200 && newWidth <= window.innerWidth - 100) {
                 sidebar.style.width = newWidth + 'px';
                 content.style.width = (window.innerWidth - newWidth) + 'px';
@@ -191,7 +169,6 @@
             }
         }
 
-        // Stop resizing on mouse up
         function stopResizing() {
             isResizing = false;
             document.removeEventListener('mousemove', handleMouseMove);
@@ -201,4 +178,3 @@
 
 </body>
 </html>
- 
